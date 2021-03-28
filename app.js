@@ -13,9 +13,9 @@ app.use(json());
 app.use(parser());
 app.use(logger());
 
-router.get("/auth", auth.router);// 挂载到koa-router上，同时会让所有的auth的请求路径前面加上'/auth'的请求路径。
+router.use("/auth",auth.routes(),auth.allowedMethods());// 挂载到koa-router上，同时会让所有的auth的请求路径前面加上'/auth'的请求路径。
 
-app.use(router.routes()).use(router.allowedMethods());// 将路由规则挂载到Koa上。
+app.use(router.routes(),router.allowedMethods());// 将路由规则挂载到Koa上。
 
 
 app.listen(3002, () => console.log("----------Server Started----------"));

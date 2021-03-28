@@ -1,9 +1,9 @@
 const Sequelize = require("sequelize");
 
 
-const Gm215wu = new Sequelize(
-  "mysql://root:123456a?@121.5.51.6:3306/gm_test",
-  {
+const Gm215wu = new Sequelize("gm_test","root","123456a?",{
+  dialect: 'mysql',
+  host: '121.5.51.6',
     define: {
       timestamps: false
     }
