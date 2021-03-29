@@ -1,4 +1,5 @@
 const user = require("../models/userModel.js");
+const bcryptjs = require("bcryptjs");
 
 const getUserInfo = async function(ctx) {
   const id = ctx.params.id;// 获取url里传过来的参数里的id
@@ -17,11 +18,11 @@ const vertifyUserLogin = async function(ctx){
   //处理userInfo 决定返回响应信息是什么
   if(userInfo != null){
     //有该邮箱则比较确认密码
-    if(userInfo.userPwd === pwd){
+    if(bcryptjs.compareSync(pwd , userInfo.userPwd)){
       //登录密码正确
       ctx.body = {
         status: true,
-        id: userInfo.UserID,
+        id: userInfo.userId,
         msg: "登录成功！"
       };
     }else{
@@ -41,7 +42,22 @@ const vertifyUserLogin = async function(ctx){
 };
 
 const signupNewUser = async function(ctx){
- 
+  console.log("signupNewUser");
+  const data = ctx.request.body;
+  const userInfo = await user.getUserByEmail(data.email);
+  if(!userInfo){
+    console.log("signupNewUser to");
+    const userInfo = await user.insertNewUser(data);
+    ctx.body = {
+      status : true,
+      msg : "注册成功！"
+    }
+  }else{
+    ctx.body = {
+      status : false,
+      msg : "该邮箱已注册！"
+    }
+  }
 }
 
 module.exports = {

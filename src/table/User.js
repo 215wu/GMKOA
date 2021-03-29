@@ -2,19 +2,20 @@ const Sequelize = require('sequelize');
 module.exports = function(sequelize, DataTypes) {
   return sequelize.define('User', {
     userId: {
-      type: DataTypes.STRING(6),
+      autoIncrement: true,
+      type: DataTypes.MEDIUMINT.UNSIGNED,
       allowNull: false,
       primaryKey: true
     },
+    userEmail: {
+      type: DataTypes.STRING(60),
+      allowNull: false
+    },
     userPwd: {
-      type: DataTypes.STRING(20),
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     userName: {
-      type: DataTypes.STRING(20),
-      allowNull: true
-    },
-    userEmail: {
       type: DataTypes.STRING(60),
       allowNull: false
     }

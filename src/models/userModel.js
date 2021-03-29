@@ -1,4 +1,5 @@
 const {DataTypes} = require('sequelize');
+const bcryptjs =require("bcryptjs");
 const db = require("../config/database.js");
 const userModel = require("../table/User.js");
 const Gm215wu = db.Gm215wu;
@@ -18,7 +19,7 @@ const getUserById = async function(id) {
 };
 
 const getUserByEmail = async function(email,psw){
-  console.log("vertify beginning!");
+  //console.log("vertify beginning!");
   const userInfo = await User.findOne({
     where: {
       userEmail : email
@@ -28,7 +29,22 @@ const getUserByEmail = async function(email,psw){
 
 }
 
+const insertNewUser = async function(data){
+  console.log("insert beginning!");
+  const tempPwd = bcryptjs.hashSync(data.pwd, 10);
+  console.log(tempPwd);
+  const userInfo = await User.create({
+    userName: data.name,
+    userPwd: tempPwd,
+    userEmail: data.email
+  }).catch(err => {
+    console.log("Error in insertNewUser:", err);
+  });
+  return userInfo;
+}
+
 module.exports = {
   getUserById,
-  getUserByEmail
+  getUserByEmail,
+  insertNewUser
 };
