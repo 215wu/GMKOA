@@ -7,6 +7,8 @@ const auth = require("./src/routes/auth.js");
 const getData = require("./src/routes/getData");
 const updateData = require('./src/routes/updateData');
 const addData = require('./src/routes/addData');
+const deleteData = require('./src/routes/deleteData');
+const searchData = require('./src/routes/searchData');
 
 const app = new Koa();
 const router = new KoaRouter();
@@ -20,6 +22,8 @@ router.use("/auth",auth.routes());// 挂载到koa-router上，同时会让所有
 router.use("/getData",getData.routes());
 router.use("/updateData",updateData.routes());
 router.use("/addData",addData.routes());
+router.use("/deleteData",deleteData.routes());
+router.use("/searchData",searchData.routes());
 
 app.use(router.routes(),router.allowedMethods());// 将路由规则挂载到Koa上。
 

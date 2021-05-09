@@ -1,3 +1,4 @@
+const Sequelize = require('sequelize');
 const {DataTypes} = require('sequelize');
 const bcryptjs =require("bcryptjs");
 const db = require("../config/database.js");
@@ -5,6 +6,7 @@ const userModel = require("../table/User.js");
 const Gm215wu = db.Gm215wu;
 
 const User = userModel(Gm215wu,DataTypes);// 
+const Op = Sequelize.Op;
 
 const getUserById = async function(id=null) {
   if(id){
@@ -53,7 +55,7 @@ const insertNewUser = async function(data){
 
 const updateUserInfoById = async function(data){
   //console.log("updateUserInfoById",data);
-  const updateFlag = User.update({
+  const updateFlag = await User.update({
     userEmail:data.userEmail,
     userName:data.userName,
     type:data.type,
@@ -70,10 +72,56 @@ const updateUserInfoById = async function(data){
   return updateFlag;
 }
 
+const deleteUserInfo = async function(id){
+    const value = await User.destroy({
+      where:{
+        userId:id
+      }
+    }).catch(err=>{
+      console.log("删除失败",err);
+    })
+    console.log("value",value);
+    return value;
+}
 
+const searchUserInfo = async function(str){
+  console.log("str",str);
+  const userInfo = await User.findAll({
+    where: {
+      [Op.or]: [
+        {
+          userName: {
+            [Op.like]: "%" + str + "%"
+          }
+        },
+        {
+          userEmail: {
+            [Op.like]: "%" + str + "%"
+          }
+        },
+        {
+          phone: {
+            [Op.like]: "%" + str + "%"
+          }
+        },
+        {
+          address: {
+            [Op.like]: "%" + str + "%"
+          }
+        }
+      ]
+    }
+  }).catch(err => {
+    console.log("查找用户信息有误", err);
+  });
+  //console.log(userInfo);
+  return userInfo;
+}
 module.exports = {
   getUserById,
   getUserByEmail,
   insertNewUser,
-  updateUserInfoById
+  updateUserInfoById,
+  deleteUserInfo,
+  searchUserInfo
 };

@@ -83,9 +83,40 @@ const  updateUserInfo = async function(ctx){
   }
   
 }
+
+const deleteUserInfo = async function(ctx){
+  console.log("deleteUserByUserId:",ctx.request.body.userId);
+  const value = await user.deleteUserInfo(ctx.request.body.userId);
+  if(value){
+      ctx.body={
+        flag:true
+      }
+  }else{
+      ctx.body={
+        flag:false
+      }
+  }
+}
+
+const searchUserInfo = async function(ctx){
+  const userInfo = await user.searchUserInfo(ctx.request.body.searchStr);
+  //console.log(userInfo);
+  if(userInfo){
+    ctx.body = {
+      flag:true,
+      userData:userInfo
+    }
+  }else{
+    ctx.body = {
+      flag:false
+    }
+  }
+}
 module.exports = {
   getUserInfo,
   vertifyUserLogin,
   signupNewUser,
-  updateUserInfo
+  updateUserInfo,
+  deleteUserInfo,
+  searchUserInfo
 };
