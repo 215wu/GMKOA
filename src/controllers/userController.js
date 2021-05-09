@@ -1,18 +1,24 @@
 const user = require("../models/userModel.js");
+const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 
+
 const getUserInfo = async function(ctx) {
-  const id = ctx.params.id;// 获取url里传过来的参数里的id
-  //console.log("id:"+id);
-  const result = await user.getUserById(id);
-  //console.log("result:"+result);
-  ctx.body = result;// 将请求的结果放到response的body里返回
+  if(ctx.params.id){
+    const id = ctx.params.id;
+    const result = await user.getUserById(id);
+    ctx.body = result;
+  }else{
+    const result = await user.getUserById();
+    ctx.body = result;
+  }
+ 
 };
 
 const vertifyUserLogin = async function(ctx){
   const email = ctx.request.body.email;
   const pwd = ctx.request.body.pwd;
-  console.log("email:"+email+"\npwd:"+pwd);
+  //console.log("email:"+email+"\npwd:"+pwd);
   const userInfo = await user.getUserByEmail(email);
 
   //处理userInfo 决定返回响应信息是什么
@@ -23,7 +29,10 @@ const vertifyUserLogin = async function(ctx){
       ctx.body = {
         status: true,
         id: userInfo.userId,
-        msg: "登录成功！"
+        token :jwt.sign({
+          id:userInfo.userId,
+          email:userInfo.userEmail
+        },"215GM-User")
       };
     }else{
       ctx.body = {
@@ -44,24 +53,39 @@ const vertifyUserLogin = async function(ctx){
 const signupNewUser = async function(ctx){
   console.log("signupNewUser");
   const data = ctx.request.body;
-  const userInfo = await user.getUserByEmail(data.email);
+  const userInfo = await user.getUserByEmail(data.userEmail);
   if(!userInfo){
     console.log("signupNewUser to");
     const userInfo = await user.insertNewUser(data);
     ctx.body = {
-      status : true,
-      msg : "注册成功！"
+      flag:1
     }
   }else{
     ctx.body = {
-      status : false,
-      msg : "该邮箱已注册！"
+      flag : 2,
+      msg : "该邮箱已有用户使用！"
     }
   }
 }
 
+
+const  updateUserInfo = async function(ctx){
+  console.log("updateUserBy:",ctx.request.body.userId);
+  const userFlag = await user.updateUserInfoById(ctx.request.body);
+  if(userFlag){
+    ctx.body = {
+      flag:1
+    }
+  }else{
+    ctx.body = {
+      flag:0
+    }
+  }
+  
+}
 module.exports = {
   getUserInfo,
   vertifyUserLogin,
-  signupNewUser
+  signupNewUser,
+  updateUserInfo
 };

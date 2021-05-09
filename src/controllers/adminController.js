@@ -1,4 +1,5 @@
 const admin = require("../models/adminModel");
+const jwt = require("jsonwebtoken");
 const bcryptjs = require("bcryptjs");
 
 const getAdminInfo = async function(ctx) {
@@ -10,10 +11,9 @@ const getAdminInfo = async function(ctx) {
 };
 
 const vertifyAdminLogin = async function(ctx){
-  console.log("ghhhh");
   const id = ctx.request.body.aId;
   const pwd = ctx.request.body.aPwd;
-  console.log(id,pwd);
+  //console.log(id,pwd);
   const adminInfo = await admin.getAdminById(id);
   //处理userInfo 决定返回响应信息是什么
   if(adminInfo != null){
@@ -23,6 +23,9 @@ const vertifyAdminLogin = async function(ctx){
       ctx.body = {
         flag: 0,
         aId: adminInfo.aId,
+        token: jwt.sign({
+          id:adminInfo.aId,
+        },"215GM-Admin")
       };
     }else{
       ctx.body = {
