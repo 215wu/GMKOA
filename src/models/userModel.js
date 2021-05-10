@@ -55,7 +55,7 @@ const insertNewUser = async function(data){
 
 const updateUserInfoById = async function(data){
   //console.log("updateUserInfoById",data);
-  const updateFlag = await User.update({
+   await User.update({
     userEmail:data.userEmail,
     userName:data.userName,
     type:data.type,
@@ -69,7 +69,14 @@ const updateUserInfoById = async function(data){
   }).catch(err => {
     console.log("更新用户数据错误", err);
   });
-  return updateFlag;
+
+  const updateInfo = await User.findOne({
+    where: {
+      userId: data.userId
+    }
+  });
+
+  return updateInfo;
 }
 
 const deleteUserInfo = async function(id){

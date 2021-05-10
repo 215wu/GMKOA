@@ -20,31 +20,34 @@ const vertifyUserLogin = async function(ctx){
   const pwd = ctx.request.body.pwd;
   //console.log("email:"+email+"\npwd:"+pwd);
   const userInfo = await user.getUserByEmail(email);
-
+  //console.log("登陆返回userInfo:",userInfo);
   //处理userInfo 决定返回响应信息是什么
-  if(userInfo != null){
+  if(userInfo){
     //有该邮箱则比较确认密码
     if(bcryptjs.compareSync(pwd , userInfo.userPwd)){
       //登录密码正确
       ctx.body = {
-        status: true,
-        id: userInfo.userId,
-        token :jwt.sign({
-          id:userInfo.userId,
-          email:userInfo.userEmail
-        },"215GM-User")
+        flag: true,
+        userData: {
+          ...(userInfo.dataValues),
+          userPwd:"不可见",
+          token :jwt.sign({
+            id:userInfo.userId,
+            email:userInfo.userEmail
+          },"215GM-User")
+        }
       };
     }else{
       ctx.body = {
-        status: false,
-        msg: "密码错误！"
+        flag: false,
+        info:"密码错误！"
       };
     }
   }else{
     //用户不存在
     ctx.body = {
-      status: false,
-      msg: "用户不存在！"
+      flag: false,
+      info:"用户不存在！"
     };
   }
   
@@ -71,10 +74,16 @@ const signupNewUser = async function(ctx){
 
 const  updateUserInfo = async function(ctx){
   console.log("updateUserBy:",ctx.request.body.userId);
-  const userFlag = await user.updateUserInfoById(ctx.request.body);
-  if(userFlag){
+  const userInfo = await user.updateUserInfoById(ctx.request.body);
+  console.log("AfterUpdate:",userInfo)
+  if(userInfo){
     ctx.body = {
-      flag:1
+      flag:1,
+      userData:{
+        ...(userInfo.dataValues),
+        userPwd:"不可见",
+        token:userInfo.dataValues.userPwd
+      }
     }
   }else{
     ctx.body = {
