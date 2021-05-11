@@ -7,6 +7,12 @@ const getCouInfo = async function(ctx) {
     ctx.body = result;
  
 };
+
+const searchCourseInfo = async function(ctx){
+  const result = await cou.searchCourseInfo(ctx.request.body.searchStr);
+  ctx.body = result;
+}
 module.exports = {
-  getCouInfo
+  getCouInfo,
+  searchCourseInfo
 };

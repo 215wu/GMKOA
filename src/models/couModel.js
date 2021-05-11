@@ -1,4 +1,5 @@
-const {DataTypes} = require('sequelize');
+const Sequelize = require('sequelize');
+const {DataTypes,Op} = require('sequelize');
 const db = require("../config/database.js");
 const couModel = require("../table/Course");
 const Gm215wu = db.Gm215wu;
@@ -16,6 +17,39 @@ const getCouInfo = async function() {
   
 };
 
+const searchCourseInfo = async function(str){
+    const couData = await Cou.findAll({
+      where: {
+        [Op.or]: [
+          {
+            coName: {
+              [Op.like]: "%" + str + "%"
+            }
+          },
+          {
+            plan: {
+              [Op.like]: "%" + str + "%"
+            }
+          },
+          {
+            period: {
+              [Op.like]: "%" + str + "%"
+            }
+          },
+          {
+            introduce: {
+              [Op.like]: "%" + str + "%"
+            }
+          }
+        ]
+      }
+    }).catch(err=>{
+      console.log("查找课程有误！",err);
+    });
+    return couData;
+}
+
 module.exports = {
-  getCouInfo
+  getCouInfo,
+  searchCourseInfo
 };

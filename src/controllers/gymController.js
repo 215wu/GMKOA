@@ -7,6 +7,12 @@ const getGymInfo = async function(ctx) {
     ctx.body = result;
  
 };
+
+const searchGymInfo = async function(ctx){
+  const result = await gym.searchGymInfo(ctx.request.body.searchStr);
+  ctx.body = result;
+}
 module.exports = {
-  getGymInfo
+  getGymInfo,
+  searchGymInfo
 };

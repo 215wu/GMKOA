@@ -61,7 +61,9 @@ const updateUserInfoById = async function(data){
     type:data.type,
     sex:data.sex,
     phone:data.phone,
-    address:data.address
+    address:data.address,
+    answer:data.answer,
+    question:data.question
   },{
     where:{
       userId:data.userId
